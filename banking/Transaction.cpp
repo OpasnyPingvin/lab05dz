@@ -10,9 +10,7 @@ namespace {
 
 struct Guard {
   Guard(Account& account) : account_(&account) { account_->Lock(); }
-
   ~Guard() { account_->Unlock(); }
-
  private:
   Account* account_;
 };
@@ -25,18 +23,14 @@ Transaction::~Transaction() {}
 
 bool Transaction::Make(Account& from, Account& to, int sum) {
   if (from.id() == to.id()) throw std::logic_error("invalid action");
-
   if (sum < 0) throw std::invalid_argument("sum can't be negative");
-
   if (sum < 100) throw std::logic_error("too small");
-
   if (fee_ * 2 > sum) return false;
 
   Guard guard_from(from);
   Guard guard_to(to);
 
   Credit(to, sum);
-
   bool success = Debit(from, sum + fee_);
   if (!success) to.ChangeBalance(-sum);
 
@@ -60,8 +54,6 @@ bool Transaction::Debit(Account& accout, int sum) {
 
 void Transaction::SaveToDataBase(Account& from, Account& to, int sum) {
   std::cout << from.id() << " send to " << to.id() << " $" << sum << std::endl;
-  std::cout << "Balance " << from.id() << " is " << from.GetBalance()
-            << std::endl;
+  std::cout << "Balance " << from.id() << " is " << from.GetBalance() << std::endl;
   std::cout << "Balance " << to.id() << " is " << to.GetBalance() << std::endl;
 }
-
