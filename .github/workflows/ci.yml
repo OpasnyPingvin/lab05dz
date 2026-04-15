@@ -16,7 +16,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y cmake libgtest-dev libgmock-dev lcov curl
+          sudo apt install -y cmake g++ libgtest-dev libgmock-dev lcov curl
 
       - name: Configure CMake
         run: |
@@ -29,15 +29,14 @@ jobs:
       - name: Run tests
         run: |
           cd build
-          ctest --output-on-failure
-          echo "Checking for .gcda files:"
-          find . -name "*.gcda" -ls
+          ./tests/test_account
+          ./tests/test_transaction
 
       - name: Collect coverage
         run: |
           cd build
           lcov --capture --directory . --output-file coverage.info --no-external --ignore-errors empty
-          lcov --remove coverage.info '*/tests/*' '*/usr/*' '*/banking/*.h' --output-file coverage_filtered.info --ignore-errors empty
+          lcov --remove coverage.info '*/tests/*' '*/usr/*' '*/banking/*.h' --output-file coverage_filtered.info --ignore-errors unused
           lcov --list coverage_filtered.info
 
       - name: Upload coverage to Coveralls
