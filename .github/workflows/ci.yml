@@ -32,20 +32,16 @@ jobs:
           ./tests/test_account
           ./tests/test_transaction
 
-      - name: Generate coverage
+      - name: Generate coverage with lcov
         run: |
           cd build
-          gcovr --root .. --xml --output coverage.xml --gcov-ignore-parse-errors
-          gcovr --root .. --print-summary
-
-      - name: Convert to lcov format
-        run: |
-          cd build
-          gcovr --root .. --lcov --output coverage.lcov
+          lcov --capture --directory . --output-file coverage.info --no-external --ignore-errors mismatch,empty,unused
+          lcov --remove coverage.info '*/tests/*' '*/usr/*' '*/banking/*.h' '*/googletest/*' '*/gmock/*' --output-file coverage_filtered.info --ignore-errors unused
+          lcov --list coverage_filtered.info
 
       - name: Upload to Coveralls
         uses: coverallsapp/github-action@v2
         with:
-          file: build/coverage.lcov
+          file: build/coverage_filtered.info
           format: lcov
           github-token: ${{ secrets.GITHUB_TOKEN }}
