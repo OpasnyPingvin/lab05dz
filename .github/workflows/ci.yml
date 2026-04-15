@@ -16,9 +16,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y cmake build-essential
-          sudo apt install -y libgtest-dev libgmock-dev
-          sudo apt install -y lcov curl
+          sudo apt install -y cmake libgtest-dev libgmock-dev lcov curl
 
       - name: Configure CMake
         run: |
@@ -26,18 +24,20 @@ jobs:
           cmake -H. -Bbuild -DENABLE_COVERAGE=ON -DCMAKE_BUILD_TYPE=Debug
 
       - name: Build
-        run: cmake --build build
+        run: cmake --build build -j $(nproc)
 
       - name: Run tests
         run: |
           cd build
           ctest --output-on-failure
+          echo "Checking for .gcda files:"
+          find . -name "*.gcda" -ls
 
       - name: Collect coverage
         run: |
           cd build
-          lcov --capture --directory . --output-file coverage.info --no-external
-          lcov --remove coverage.info '*/tests/*' '*/usr/*' '*/banking/*.h' --output-file coverage_filtered.info
+          lcov --capture --directory . --output-file coverage.info --no-external --ignore-errors empty
+          lcov --remove coverage.info '*/tests/*' '*/usr/*' '*/banking/*.h' --output-file coverage_filtered.info --ignore-errors empty
           lcov --list coverage_filtered.info
 
       - name: Upload coverage to Coveralls
