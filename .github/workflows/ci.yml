@@ -41,7 +41,4 @@ jobs:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
         run: |
           cd build
-          curl -L https:github.com/coverallsapp/coverage-reporter/releases/download/v0.6.0/coveralls-linux-amd64.tar.gz | tar -xz
-        ./coveralls --gcov-options '\-lp' --coverage-file coverage_fitlered.info --base-path .. --verbose 
-
-      
+          curl -L https:github.com/coverallsapp/coverage-reporter/releases/download/v0.6.0/coveralls-linux-amd64.tar.gz | tar -xz ./coveralls --gcov-options '\-lp' --coverage-file coverage_fitlered.info --base-path .. --verbose
