@@ -26,18 +26,30 @@ jobs:
       - name: Build
         run: cmake --build build -j $(nproc)
 
-      - name: Run tests
+      - name: Run tests with debug
         run: |
           cd build
-          ./tests/test_account
-          ./tests/test_transaction
+          echo "=== Running test_account ==="
+          ./tests/test_account --gtest_print_time=1
+          echo "Exit code: $?"
+          echo "=== Running test_transaction ==="
+          ./tests/test_transaction --gtest_print_time=1
+          echo "Exit code: $?"
+          echo "=== Checking gcda files ==="
+          find . -name "*.gcda" -exec ls -la {} \;
+          echo "=== Checking gcda file content (first 100 bytes) ==="
+          for f in $(find . -name "*.gcda"); do
+            echo "File: $f"
+            xxd $f | head -5
+          done
 
-      - name: Generate coverage with lcov
+      - name: Generate coverage
         run: |
           cd build
-          lcov --capture --directory . --output-file coverage.info --no-external --ignore-errors mismatch,empty,unused
-          lcov --remove coverage.info '*/tests/*' '*/usr/*' '*/banking/*.h' '*/googletest/*' '*/gmock/*' --output-file coverage_filtered.info --ignore-errors unused
-          lcov --list coverage_filtered.info
+          echo "=== Running gcov manually ==="
+          gcov banking/CMakeFiles/banking.dir/Account.cpp.gcno
+          gcov banking/CMakeFiles/banking.dir/Transaction.cpp.gcno
+          cat Account.cpp.gcov | head -20
 
       - name: Upload to Coveralls
         uses: coverallsapp/github-action@v2
