@@ -16,29 +16,32 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y cmale build-essential
+          sudo apt install -y cmake build-essential
           sudo apt install -y libgtest-dev libgmock-dev
+          sudo apt install -y lcov curl
 
       - name: Configure CMake
-        run: 
-          cmake -H. -Bbuild -DENABLE_COVERAGE=ON -DCMAKE_BUILD_TYPE=Debug
+        run: cmake -H. -Bbuild -DENABLE_COVERAGE=ON -DCMAKE_BUILD_TYPE=Debug
 
       - name: Build
         run: cmake --build build
 
       - name: Run tests
-        run: cmake --build build --target test
+        run: |
+          cd build
+          ctest --output-on-failure
 
       - name: Collect coverage
         run: |
           cd build
           lcov --capture --directory . --output-file coverage.info --no-external
           lcov --remove coverage.info '*/tests/*' '*/usr/*' '*/banking/*.h' --output-file coverage_filtered.info
-          lcov -list coverage_filtered.info
+          lcov --list coverage_filtered.info
 
       - name: Upload coverage to Coveralls
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
         run: |
           cd build
-          curl -L https:github.com/coverallsapp/coverage-reporter/releases/download/v0.6.0/coveralls-linux-amd64.tar.gz | tar -xz ./coveralls --gcov-options '\-lp' --coverage-file coverage_fitlered.info --base-path .. --verbose
+          curl -L https://github.com/coverallsapp/coverage-reporter/releases/download/v0.6.0/coveralls-linux-amd64.tar.gz | tar -xz
+          ./coveralls --gcov-options '\-lp' --coverage-file coverage_filtered.info --base-path .. --verbose
