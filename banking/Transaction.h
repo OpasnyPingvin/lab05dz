@@ -21,7 +21,5 @@ class Transaction {
   int fee_;
 
   friend class MockAccount;
-  friend class Transaction_Credit_CallsChangeBalance_Test;
-  friend class Transaction_Debit_WhenBalanceSufficient_ReturnsTrue_Test;
-  friend class Transaction_Debit_WhenBalanceInsufficient_ReturnsFalse_Test;
+  friend class TestTransaction;
 };
