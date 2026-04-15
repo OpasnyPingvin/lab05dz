@@ -1,0 +1,5 @@
+if(EXISTS "/home/pingvin/Pingvin/workspace/reports/lab05dz/build/tests/test_account[1]_tests.cmake")
+  include("/home/pingvin/Pingvin/workspace/reports/lab05dz/build/tests/test_account[1]_tests.cmake")
+else()
+  add_test(test_account_NOT_BUILT test_account_NOT_BUILT)
+endif()

@@ -1,0 +1,9 @@
+/home/pingvin/Pingvin/workspace/reports/lab05dz/build/CMakeFiles/edit_cache.dir
+/home/pingvin/Pingvin/workspace/reports/lab05dz/build/CMakeFiles/rebuild_cache.dir
+/home/pingvin/Pingvin/workspace/reports/lab05dz/build/banking/CMakeFiles/banking.dir
+/home/pingvin/Pingvin/workspace/reports/lab05dz/build/banking/CMakeFiles/edit_cache.dir
+/home/pingvin/Pingvin/workspace/reports/lab05dz/build/banking/CMakeFiles/rebuild_cache.dir
+/home/pingvin/Pingvin/workspace/reports/lab05dz/build/tests/CMakeFiles/test_account.dir
+/home/pingvin/Pingvin/workspace/reports/lab05dz/build/tests/CMakeFiles/test_transaction.dir
+/home/pingvin/Pingvin/workspace/reports/lab05dz/build/tests/CMakeFiles/edit_cache.dir
+/home/pingvin/Pingvin/workspace/reports/lab05dz/build/tests/CMakeFiles/rebuild_cache.dir

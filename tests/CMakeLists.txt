@@ -1,0 +1,15 @@
+find_package(GTest REQUIRED)
+include(GoogleTest)
+
+# Тесты для Account (без mock)
+add_executable(test_account test_account.cpp)
+target_link_libraries(test_account banking GTest::gtest GTest::gmock GTest::gtest_main)
+target_include_directories(test_account PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/..)
+
+# Тесты для Transaction (с моком внутри файла)
+add_executable(test_transaction test_transaction.cpp)
+target_link_libraries(test_transaction banking GTest::gtest GTest::gmock GTest::gtest_main)
+target_include_directories(test_transaction PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/..)
+
+gtest_discover_tests(test_account)
+gtest_discover_tests(test_transaction)

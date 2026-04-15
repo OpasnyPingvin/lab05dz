@@ -1,0 +1,47 @@
+name CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y cmale build-essential
+          sudo apt install -y libgtest-dev libgmock-dev
+
+      - name: Configure CMake
+        run: 
+          cmake -H. -Bbuild -DENABLE_COVERAGE=ON -DCMAKE_BUILD_TYPE=Debug
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Run tests
+        run: cmake --build build --target test
+
+      - name: Collect coverage
+        run: |
+          cd build
+          lcov --capture --directory . --output-file coverage.info --no-external
+          lcov --remove coverage.info '*/tests/*' '*/usr/*' '*/banking/*.h' --output-file coverage_filtered.info
+          lcov -list coverage_filtered.info
+
+      - name: Upload coverage to Coveralls
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        run: |
+          cd build
+          curl -L https:github.com/coverallsapp/coverage-reporter/releases/download/v0.6.0/coveralls-linux-amd64.tar.gz | tar -xz
+        ./coveralls --gcov-options '\-lp' --coverage-file coverage_fitlered.info --base-path .. --verbose 
+
+      
