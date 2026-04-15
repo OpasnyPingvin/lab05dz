@@ -32,17 +32,14 @@ jobs:
           ./tests/test_account
           ./tests/test_transaction
 
-      - name: Collect coverage
+      - name: Generate coverage report
         run: |
           cd build
-          lcov --capture --directory . --output-file coverage.info --no-external --ignore-errors empty
-          lcov --remove coverage.info '*/tests/*' '*/usr/*' '*/banking/*.h' --output-file coverage_filtered.info --ignore-errors unused
-          lcov --list coverage_filtered.info
+          lcov --capture --directory . --output-file coverage.info --no-external
+          lcov --remove coverage.info '*/tests/*' '*/usr/*' '*/banking/*.h' --output-file coverage.info
 
-      - name: Upload coverage to Coveralls
-        env:
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-        run: |
-          cd build
-          curl -L https://github.com/coverallsapp/coverage-reporter/releases/download/v0.6.0/coveralls-linux-amd64.tar.gz | tar -xz
-          ./coveralls --gcov-options '\-lp' --coverage-file coverage_filtered.info --base-path .. --verbose
+      - name: Coveralls
+        uses: coverallsapp/github-action@v2
+        with:
+          file: build/coverage.info
+          format: lcov
