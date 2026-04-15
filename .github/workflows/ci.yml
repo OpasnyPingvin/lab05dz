@@ -16,7 +16,8 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y cmake g++ lcov curl libgtest-dev libgmock-dev
+          sudo apt install -y cmake g++ libgtest-dev libgmock-dev python3-pip
+          pip3 install gcovr
 
       - name: Configure CMake
         run: |
@@ -32,17 +33,15 @@ jobs:
           ./tests/test_account
           ./tests/test_transaction
 
-      - name: Generate coverage report
+      - name: Generate coverage with gcovr
         run: |
           cd build
-          lcov --capture --directory . --output-file coverage.info --no-external --ignore-errors mismatch,empty,unused
-          lcov --remove coverage.info '*/tests/*' '*/usr/*' '*/banking/*.h' '*/googletest/*' '*/gmock/*' --output-file coverage_filtered.info --ignore-errors unused
-          lcov --list coverage_filtered.info
+          gcovr --root .. --lcov --output coverage.lcov
+          gcovr --root .. --print-summary
 
       - name: Upload to Coveralls
         uses: coverallsapp/github-action@v2
         with:
-          file: build/coverage_filtered.info
+          file: build/coverage.lcov
           format: lcov
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          debug: true
