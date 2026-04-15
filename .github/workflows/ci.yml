@@ -21,7 +21,9 @@ jobs:
           sudo apt install -y lcov curl
 
       - name: Configure CMake
-        run: cmake -H. -Bbuild -DENABLE_COVERAGE=ON -DCMAKE_BUILD_TYPE=Debug
+        run: |
+          rm -rf build
+          cmake -H. -Bbuild -DENABLE_COVERAGE=ON -DCMAKE_BUILD_TYPE=Debug
 
       - name: Build
         run: cmake --build build
