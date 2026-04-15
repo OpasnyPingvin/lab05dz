@@ -10,12 +10,5 @@ target_link_libraries(test_transaction banking GTest::gtest GTest::gmock GTest::
 target_include_directories(test_account PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/..)
 target_include_directories(test_transaction PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/..)
 
-if(ENABLE_COVERAGE)
-    target_compile_options(test_account PRIVATE -O0 -g --coverage)
-    target_link_options(test_account PRIVATE --coverage)
-    target_compile_options(test_transaction PRIVATE -O0 -g --coverage)
-    target_link_options(test_transaction PRIVATE --coverage)
-endif()
-
 gtest_discover_tests(test_account)
 gtest_discover_tests(test_transaction)
