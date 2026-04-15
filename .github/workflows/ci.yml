@@ -16,13 +16,13 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y cmake g++-13 libgtest-dev libgmock-dev lcov curl
-          sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-13 100
+          sudo apt install -y cmake g++ lcov curl libgtest-dev libgmock-dev
+          pip install gcovr
 
       - name: Configure CMake
         run: |
           rm -rf build
-          cmake -H. -Bbuild -DENABLE_COVERAGE=ON -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=g++-13
+          cmake -H. -Bbuild -DENABLE_COVERAGE=ON -DCMAKE_BUILD_TYPE=Debug
 
       - name: Build
         run: cmake --build build -j $(nproc)
@@ -30,23 +30,18 @@ jobs:
       - name: Run tests
         run: |
           cd build
-          ctest --output-on-failure --verbose
-          ls -la
-          ls -la banking/CMakeFiles/banking.dir/
-          ls -la tests/CMakeFiles/test_account.dir/
+          ./tests/test_account
+          ./tests/test_transaction
 
-      - name: Generate coverage report
+      - name: Generate coverage with gcovr
         run: |
           cd build
-          gcov-13 --version
-          find . -name "*.gcno" -exec gcov-13 -b -c {} \;
-          lcov --capture --directory . --output-file coverage.info --test-name test --no-external --rc lcov_branch_coverage=1
-          lcov --remove coverage.info '*/tests/*' '*/usr/*' '*/banking/*.h' '*/googletest/*' -o coverage_filtered.info
-          lcov --list coverage_filtered.info
+          gcovr --root .. --xml --output coverage.xml --gcov-ignore-parse-errors
+          gcovr --root .. --print-summary
 
       - name: Upload to Coveralls
         uses: coverallsapp/github-action@v2
         with:
-          file: build/coverage_filtered.info
-          format: lcov
+          file: build/coverage.xml
+          format: gcovr
           github-token: ${{ secrets.GITHUB_TOKEN }}
