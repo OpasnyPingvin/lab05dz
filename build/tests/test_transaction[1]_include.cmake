@@ -1,5 +1,0 @@
-if(EXISTS "/home/pingvin/Pingvin/workspace/reports/lab05dz/build/tests/test_transaction[1]_tests.cmake")
-  include("/home/pingvin/Pingvin/workspace/reports/lab05dz/build/tests/test_transaction[1]_tests.cmake")
-else()
-  add_test(test_transaction_NOT_BUILT test_transaction_NOT_BUILT)
-endif()
